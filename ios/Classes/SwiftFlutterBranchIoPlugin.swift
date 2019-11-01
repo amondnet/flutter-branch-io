@@ -172,7 +172,7 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let branchHandled = Branch.getInstance()?.application(app, open: url, options: options) ?? false
-        return false
+        return true
     }
 
     func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
