@@ -4,6 +4,7 @@ import UIKit
 
 public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, FlutterPlugin, FlutterStreamHandler {
     private var generatedLinkSink: FlutterEventSink?
+    private var eventSink: FlutterEventSink?
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let instance = SwiftFlutterBranchIoPlugin()
@@ -13,6 +14,9 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
 
         let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
         generatedLinkChannel.setStreamHandler(instance)
+        let eventChannel = FlutterEventChannel(name: "flutter_branch_io/event", binaryMessenger: registrar.messenger())
+        var eventHandler = EventStreamHandler(eventSink)
+        eventChannel.setStreamHandler(eventHandler)
     }
 
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -152,11 +156,11 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         Branch.getInstance()?.initSession(launchOptions: launchOptions) { params, error in
             // do stuff with deep link data (nav to page, display content, etc)
             print(params as? [String: AnyObject] ?? {})
-            if self.generatedLinkSink != nil {
+            if self.eventSink != nil {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
                     let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
-                    self.generatedLinkSink!(jsonString)
+                    self.eventSink!(jsonString)
 
                 } catch {
                     print("BRANCH IO FLUTTER IOS ERROR")
