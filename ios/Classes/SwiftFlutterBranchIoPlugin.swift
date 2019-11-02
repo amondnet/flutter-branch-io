@@ -147,7 +147,6 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
     }
 
     public func application(
-        _: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         Branch.getInstance()?.initSession(launchOptions: launchOptions) { params, error in
@@ -175,12 +174,12 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
         return branchHandled
     }
 
-    public func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
+    public func application(didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
         // handler for Push Notifications
         Branch.getInstance()?.handlePushNotification(userInfo)
     }
 
-    public func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    public func application(continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // handler for Universal Links
         let handledByBranch = Branch.getInstance()?.continue(userActivity) ?? false
         return handledByBranch
