@@ -10,9 +10,9 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
 
         let instance = SwiftFlutterBranchIoPlugin()
+        registrar.addApplicationDelegate(instance)
         generatedLinkChannel.setStreamHandler(instance)
         registrar.addMethodCallDelegate(instance, channel: channel)
-        registrar.addApplicationDelegate(instance)
     }
 
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
