@@ -40,8 +40,8 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
     }
 
     private func sendUrlToSink(url: String) {
-        if SwiftFlutterBranchIoPlugin.eventHandler?.eventSink != nil {
-            SwiftFlutterBranchIoPlugin.eventHandler!.eventSink!(url)
+        if SwiftFlutterBranchIoPlugin.generatedLinkHandler?.eventSink != nil {
+            SwiftFlutterBranchIoPlugin.generatedLinkHandler!.eventSink!(url)
         } else {
             print("Generated Link Sink is nil")
         }
