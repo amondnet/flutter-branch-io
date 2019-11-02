@@ -11,11 +11,11 @@ class EventStreamHandler: NSObject, FlutterStreamHandler {
     }
     // EventChannel.StreamHandler methods
     public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        generatedLinkSink = events
+        eventSink = events
         return nil
     }
     public func onCancel(withArguments _: Any?) -> FlutterError? {
-        generatedLinkSink = nil
+        eventSink = nil
         return nil
     }
 }

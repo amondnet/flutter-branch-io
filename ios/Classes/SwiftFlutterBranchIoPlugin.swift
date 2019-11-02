@@ -2,7 +2,7 @@ import Branch
 import Flutter
 import UIKit
 
-public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, FlutterPlugin, FlutterStreamHandler {
+public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, FlutterPlugin {
     private var generatedLinkSink: FlutterEventSink?
     private var eventSink: FlutterEventSink?
 
@@ -13,20 +13,12 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         registrar.addApplicationDelegate(instance)
 
         let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
-        generatedLinkChannel.setStreamHandler(instance)
+        var generatedLinkHandler = EventStreamHandler(generatedLinkSink)
+        generatedLinkChannel.setStreamHandler(generatedLinkHandler)
+
         let eventChannel = FlutterEventChannel(name: "flutter_branch_io/event", binaryMessenger: registrar.messenger())
         var eventHandler = EventStreamHandler(eventSink)
         eventChannel.setStreamHandler(eventHandler)
-    }
-
-    public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        generatedLinkSink = events
-        return nil
-    }
-
-    public func onCancel(withArguments _: Any?) -> FlutterError? {
-        generatedLinkSink = nil
-        return nil
     }
 
     func convertToDictionary(text: String) -> [String: Any]? {
