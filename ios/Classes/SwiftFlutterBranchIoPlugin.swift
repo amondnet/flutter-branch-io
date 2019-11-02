@@ -6,11 +6,11 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
     private var generatedLinkSink: FlutterEventSink?
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "flutter_branch_io/message", binaryMessenger: registrar.messenger())
-        let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
-
         let instance = SwiftFlutterBranchIoPlugin()
         registrar.addApplicationDelegate(instance)
+        
+        let channel = FlutterMethodChannel(name: "flutter_branch_io/message", binaryMessenger: registrar.messenger())
+        let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
         generatedLinkChannel.setStreamHandler(instance)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
@@ -166,7 +166,7 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
                 print("Branch IO eventSink is nil")
             }
         }
-        return true
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
     override public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
