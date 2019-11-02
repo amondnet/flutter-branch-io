@@ -2,7 +2,7 @@ import Branch
 import Flutter
 import UIKit
 
-public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
+public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, FlutterPlugin, FlutterStreamHandler {
     private var generatedLinkSink: FlutterEventSink?
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -146,8 +146,8 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
         }
     }
 
-    public func application(
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    override public func application(
+        _ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any]
     ) -> Bool {
         Branch.getInstance()?.initSession(launchOptions: launchOptions) { params, error in
             // do stuff with deep link data (nav to page, display content, etc)
@@ -169,17 +169,17 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
         return true
     }
 
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    override public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let branchHandled = Branch.getInstance()?.application(app, open: url, options: options) ?? false
         return branchHandled
     }
 
-    public func application(didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
+    @nonobjc override public func application(_ app: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
         // handler for Push Notifications
         Branch.getInstance()?.handlePushNotification(userInfo)
     }
 
-    public func application(continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    public func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // handler for Universal Links
         let handledByBranch = Branch.getInstance()?.continue(userActivity) ?? false
         return handledByBranch
