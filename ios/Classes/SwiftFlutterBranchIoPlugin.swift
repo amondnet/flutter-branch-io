@@ -3,8 +3,8 @@ import Flutter
 import UIKit
 
 public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, FlutterPlugin {
-    private var generatedLinkSink: FlutterEventSink?
-    private var eventSink: FlutterEventSink?
+    static var eventHandler: EventStreamHandler?
+    static var generatedLinkHandler: EventStreamHandler?
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let instance = SwiftFlutterBranchIoPlugin()
@@ -13,11 +13,11 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         registrar.addApplicationDelegate(instance)
 
         let generatedLinkChannel = FlutterEventChannel(name: "flutter_branch_io/generated_link", binaryMessenger: registrar.messenger())
-        var generatedLinkHandler = EventStreamHandler(generatedLinkSink)
+        generatedLinkHandler = EventStreamHandler()
         generatedLinkChannel.setStreamHandler(generatedLinkHandler)
 
         let eventChannel = FlutterEventChannel(name: "flutter_branch_io/event", binaryMessenger: registrar.messenger())
-        var eventHandler = EventStreamHandler(eventSink)
+        eventHandler = EventStreamHandler()
         eventChannel.setStreamHandler(eventHandler)
     }
 
@@ -40,8 +40,8 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
     }
 
     private func sendUrlToSink(url: String) {
-        if generatedLinkSink != nil {
-            generatedLinkSink!(url)
+        if SwiftFlutterBranchIoPlugin.eventHandler?.eventSink != nil {
+            SwiftFlutterBranchIoPlugin.eventHandler!.eventSink!(url)
         } else {
             print("Generated Link Sink is nil")
         }
@@ -143,17 +143,16 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
     }
 
     override public func application(
-        _ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any]
+        _ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]
     ) -> Bool {
         Branch.getInstance()?.initSession(launchOptions: launchOptions) { params, error in
             // do stuff with deep link data (nav to page, display content, etc)
             print(params as? [String: AnyObject] ?? {})
-            if self.eventSink != nil {
+            if SwiftFlutterBranchIoPlugin.eventHandler?.eventSink != nil {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
                     let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
-                    self.eventSink!(jsonString)
-
+                    SwiftFlutterBranchIoPlugin.eventHandler?.eventSink!(jsonString)
                 } catch {
                     print("BRANCH IO FLUTTER IOS ERROR")
                     print(error)
