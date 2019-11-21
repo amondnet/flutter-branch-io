@@ -15,7 +15,7 @@ A new Flutter plugin to port Branch IO SDK.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'Branch'
+  s.dependency 'Branch', '~> 0.30.0'
 
   s.ios.deployment_target = '8.0'
   s.swift_version = '4.2'
